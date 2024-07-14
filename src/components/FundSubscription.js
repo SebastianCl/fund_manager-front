@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Button, TextField, MenuItem, FormControl, FormLabel, RadioGroup, Radio, FormControlLabel } from '@mui/material';
+import { Box, Button, TextField, MenuItem, FormControl, FormLabel, RadioGroup, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
 
 function FundSubscription() {
     const [funds, setFunds] = useState([]);
@@ -8,6 +8,8 @@ function FundSubscription() {
     const [amount, setAmount] = useState('');
     const [notificationMethod, setNotificationMethod] = useState('email');
     const [minimumAmount, setMinimumAmount] = useState(0);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogContent, setDialogContent] = useState({});
 
     useEffect(() => {
         axios.get('http://localhost:8000/funds')
@@ -19,19 +21,24 @@ function FundSubscription() {
             });
     }, []);
 
-    const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(amount);
-    };
-
     const handleFundChange = (fundId) => {
         setSelectedFund(fundId);
         const selectedFundObj = funds.find(fund => fund.fund_id === fundId);
         if (selectedFundObj) {
-            setMinimumAmount(formatCurrency(selectedFundObj.minimum_amount));
+            setMinimumAmount(selectedFundObj.minimum_amount);
         }
     };
 
     const handleSubscription = () => {
+        if (parseInt(amount) < minimumAmount) {
+            setDialogContent({
+                title: 'Error de Suscripción',
+                message: `El monto ingresado (${amount}) debe ser mayor o igual al mínimo permitido (${minimumAmount})`
+            });
+            setDialogOpen(true);
+            return;
+        }
+
         const subscriptionData = {
             user_id: 1,
             fund_id: selectedFund,
@@ -41,11 +48,25 @@ function FundSubscription() {
         axios.post('http://localhost:8000/join_a_found', subscriptionData)
             .then(response => {
                 console.log('Subscribed successfully:', response.data);
-                // Enviar notificación...
+                setDialogContent({
+                    title: 'Suscripción Exitosa',
+                    message: `¡Te has suscrito al fondo correctamente!`
+                });
+                setDialogOpen(true);
             })
             .catch(error => {
                 console.error('Error subscribing:', error);
+                setDialogContent({
+                    title: 'Error de Suscripción',
+                    message: `Hubo un error al intentar suscribirse: ${error.message}`
+                });
+                setDialogOpen(true);
             });
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+        setDialogContent({});
     };
 
     return (
@@ -87,6 +108,18 @@ function FundSubscription() {
             <Button variant="contained" color="primary" onClick={handleSubscription} fullWidth>
                 Suscribirse
             </Button>
+
+            <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+                <DialogTitle>{dialogContent.title}</DialogTitle>
+                <DialogContent>
+                    <Typography>{dialogContent.message}</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} color="primary">
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
