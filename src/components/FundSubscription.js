@@ -7,6 +7,7 @@ function FundSubscription() {
     const [selectedFund, setSelectedFund] = useState('');
     const [amount, setAmount] = useState('');
     const [notificationMethod, setNotificationMethod] = useState('email');
+    const [minimumAmount, setMinimumAmount] = useState(0);
 
     useEffect(() => {
         axios.get('http://localhost:8000/funds')
@@ -18,9 +19,21 @@ function FundSubscription() {
             });
     }, []);
 
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(amount);
+    };
+
+    const handleFundChange = (fundId) => {
+        setSelectedFund(fundId);
+        const selectedFundObj = funds.find(fund => fund.fund_id === fundId);
+        if (selectedFundObj) {
+            setMinimumAmount(formatCurrency(selectedFundObj.minimum_amount));
+        }
+    };
+
     const handleSubscription = () => {
         const subscriptionData = {
-            user_id: 1, // Se puede obtener dinámicamente
+            user_id: 1,
             fund_id: selectedFund,
             amount: parseInt(amount)
         };
@@ -42,7 +55,7 @@ function FundSubscription() {
                 select
                 label="Seleccione un fondo"
                 value={selectedFund}
-                onChange={(e) => setSelectedFund(e.target.value)}
+                onChange={(e) => handleFundChange(e.target.value)}
                 fullWidth
                 margin="normal"
             >
@@ -54,11 +67,12 @@ function FundSubscription() {
             </TextField>
             <TextField
                 type="number"
-                label="Cantidad"
+                label={`Cantidad (mínimo: ${minimumAmount})`}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 fullWidth
                 margin="normal"
+                inputProps={{ min: minimumAmount }}
             />
             <FormControl component="fieldset" margin="normal">
                 <FormLabel component="legend">Método de Notificación</FormLabel>
