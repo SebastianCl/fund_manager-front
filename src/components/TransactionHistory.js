@@ -70,9 +70,12 @@ function TransactionHistory() {
                     <Card key={index} sx={{ marginBottom: 2 }}>
                         <CardContent>
                             <Typography variant="h6">
-                                {transaction.type === 'join' ? 'Suscripción' : 'Cancelación'} en {getFundName(transaction.fund_id)}
+                                {transaction.type === 'apertura' ? 'Apertura' : 'Cancelación'} en {getFundName(transaction.fund_id)}
                             </Typography>
                             <Divider sx={{ marginY: 1 }} />
+                            <Typography variant="body2" color="textSecondary">
+                                ID de Transacción: {transaction.transaction_id}
+                            </Typography>
                             <Typography variant="body2" color="textSecondary">
                                 Fecha: {formatDate(transaction.date)}
                             </Typography>
