@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Container, Snackbar } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 import FundSubscription from './components/FundSubscription';
 import FundCancellation from './components/FundCancellation';
 import TransactionHistory from './components/TransactionHistory';
 import './App.css';
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 function App() {
   const [userData, setUserData] = useState(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
-
     const fetchUserData = async () => {
       try {
         const response = await fetch('http://localhost:8000/users/1'); // Ajustar URL según tu configuración de API
@@ -26,6 +33,16 @@ function App() {
 
     fetchUserData();
   }, []);
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
+  const handleSnackbar = (severity, message) => {
+    setSnackbarSeverity(severity);
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('es-CO', {
@@ -59,17 +76,22 @@ function App() {
       </AppBar>
       <Container>
         <Routes>
-          <Route path="/subscribe" element={<FundSubscription />} />
-          <Route path="/cancel" element={<FundCancellation />} />
+          <Route path="/subscribe" element={<FundSubscription handleSnackbar={handleSnackbar} />} />
+          <Route path="/cancel" element={<FundCancellation handleSnackbar={handleSnackbar} />} />
           <Route path="/history" element={<TransactionHistory />} />
           <Route path="/" element={
             <Typography variant="h4" align="center" gutterBottom>
-              Hola
-              {/* Hola {userData.name}, disponible: {formatCurrency(userData.amount)} { } */}
+              Hola {userData ? userData.name : ''}, disponible: {userData ? formatCurrency(userData.amount) : ''}
             </Typography>
           } />
         </Routes>
       </Container>
+
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Router>
   );
 }
