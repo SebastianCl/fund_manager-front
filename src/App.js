@@ -1,24 +1,20 @@
-import logo from './logo.svg';
+import React from 'react';
+import FundSubscription from './components/FundSubscription';
+import FundCancellation from './components/FundCancellation';
+import TransactionHistory from './components/TransactionHistory';
+import { Container, Typography } from '@mui/material';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <Typography variant="h1" align="center" gutterBottom>
+        FPV - Fondo Voluntario de Pensión
+      </Typography>
+      <FundSubscription />
+      <FundCancellation />
+      <TransactionHistory />
+    </Container>
   );
 }
 
