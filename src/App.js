@@ -60,7 +60,7 @@ function App() {
           </Typography>
 
           <Button color="inherit" component={Link} to="/">
-            Home
+            Inicio
           </Button>
 
           <Button color="inherit" component={Link} to="/subscribe">
