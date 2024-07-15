@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/users/1');
+        const response = await fetch(`${process.env.REACT_APP_API}/users/1`);
         if (!response.ok) {
           throw new Error('Error al cargar los datos del usuario');
         }

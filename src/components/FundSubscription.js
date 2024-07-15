@@ -13,7 +13,7 @@ function FundSubscription() {
     useEffect(() => {
         const fetchFundsData = async () => {
             try {
-                const response = await fetch('http://localhost:8000/funds');
+                const response = await fetch(`${process.env.REACT_APP_API}/funds`);
                 if (!response.ok) {
                     throw new Error('Error al cargar los fondos');
                 }
@@ -53,7 +53,7 @@ function FundSubscription() {
         };
 
         try {
-            const response = await fetch('http://localhost:8000/join_a_found', {
+            const response = await fetch(`${process.env.REACT_APP_API}/join_a_found`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

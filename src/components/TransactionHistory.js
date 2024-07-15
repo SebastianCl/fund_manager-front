@@ -9,7 +9,7 @@ function TransactionHistory() {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await fetch('http://localhost:8000/transactions');
+                const response = await fetch(`${process.env.REACT_APP_API}/transactions`);
                 if (!response.ok) {
                     throw new Error('Error al cargar los datos de las transacciones');
                 }
@@ -23,7 +23,7 @@ function TransactionHistory() {
 
         const fetchFunds = async () => {
             try {
-                const response = await fetch('http://localhost:8000/funds');
+                const response = await fetch(`${process.env.REACT_APP_API}/funds`);
                 if (!response.ok) {
                     throw new Error('Error al cargar los datos de los fondos');
                 }
