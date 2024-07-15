@@ -20,7 +20,7 @@ function App() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/users/1'); // Ajustar URL según tu configuración de API
+        const response = await fetch('http://localhost:8000/users/1');
         if (!response.ok) {
           throw new Error('Error al cargar los datos del usuario');
         }
@@ -81,7 +81,7 @@ function App() {
           <Route path="/history" element={<TransactionHistory />} />
           <Route path="/" element={
             <Typography variant="h4" align="center" gutterBottom>
-              Hola {userData ? userData.name : ''}, disponible: {userData ? formatCurrency(userData.amount) : ''}
+              Hola {userData ? userData.name : ''}, saldo disponible: {userData ? formatCurrency(userData.amount) : ''}
             </Typography>
           } />
         </Routes>

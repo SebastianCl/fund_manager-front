@@ -48,7 +48,8 @@ function FundSubscription() {
         const subscriptionData = {
             user_id: 1,
             fund_id: selectedFund,
-            amount: parseInt(amount)
+            amount: parseInt(amount),
+            notification: notificationMethod
         };
 
         try {
