@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Box, List, Card, CardContent, Typography, Divider, CircularProgress } from '@mui/material';
 
 function TransactionHistory() {
@@ -10,8 +9,13 @@ function TransactionHistory() {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/transactions');
-                setTransactions(response.data);
+                const response = await fetch('http://localhost:8000/transactions');
+                if (!response.ok) {
+                    throw new Error('Error al cargar los datos de las transacciones');
+                }
+                const transactionsData = await response.json();
+                transactionsData.sort((a, b) => new Date(b.date) - new Date(a.date))
+                setTransactions(transactionsData);
             } catch (error) {
                 console.error('Error fetching transactions:', error);
             }
@@ -19,8 +23,12 @@ function TransactionHistory() {
 
         const fetchFunds = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/funds');
-                setFunds(response.data);
+                const response = await fetch('http://localhost:8000/funds');
+                if (!response.ok) {
+                    throw new Error('Error al cargar los datos de los fondos');
+                }
+                let fundsData = await response.json();
+                setFunds(fundsData);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching funds:', error);

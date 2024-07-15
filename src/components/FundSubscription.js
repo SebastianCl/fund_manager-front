@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Box, Button, TextField, MenuItem, FormControl, FormLabel, RadioGroup, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
 
 function FundSubscription() {
@@ -12,13 +11,20 @@ function FundSubscription() {
     const [dialogContent, setDialogContent] = useState({});
 
     useEffect(() => {
-        axios.get('http://localhost:8000/funds')
-            .then(response => {
-                setFunds(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching funds:', error);
-            });
+        const fetchFundsData = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/funds');
+                if (!response.ok) {
+                    throw new Error('Error al cargar los fondos');
+                }
+                const fundsData = await response.json();
+                fundsData.sort((a, b) => b.amount - a.amount);
+                setFunds(fundsData)
+            } catch (error) {
+                console.error('Error al obtener datos de los fondos:', error.message);
+            }
+        }
+        fetchFundsData();
     }, []);
 
     const handleFundChange = (fundId) => {
@@ -29,7 +35,7 @@ function FundSubscription() {
         }
     };
 
-    const handleSubscription = () => {
+    const handleSubscription = async () => {
         if (parseInt(amount) < minimumAmount) {
             setDialogContent({
                 title: 'Error de Suscripción',
@@ -45,23 +51,34 @@ function FundSubscription() {
             amount: parseInt(amount)
         };
 
-        axios.post('http://localhost:8000/join_a_found', subscriptionData)
-            .then(response => {
-                console.log('Subscribed successfully:', response.data);
-                setDialogContent({
-                    title: 'Suscripción Exitosa',
-                    message: `¡Te has suscrito al fondo correctamente!`
-                });
-                setDialogOpen(true);
+        try {
+            const response = await fetch('http://localhost:8000/join_a_found', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(subscriptionData)
             })
-            .catch(error => {
-                console.error('Error subscribing:', error);
-                setDialogContent({
-                    title: 'Error de Suscripción',
-                    message: `Hubo un error al intentar suscribirse: ${error.message}`
-                });
-                setDialogOpen(true);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Error al cancelar la suscripción');
+            }
+            setDialogContent({
+                title: 'Suscripción Exitosa',
+                message: `¡Te has suscrito al fondo correctamente!`
             });
+            setDialogOpen(true);
+        } catch (error) {
+            console.error('Error cancelling subscription:', error);
+            setDialogContent({
+                title: 'Error de Suscripción',
+                message: `Hubo un error al intentar suscribirse: ${error.message}`
+            });
+            setDialogOpen(true);
+
+        }
+
     };
 
     const handleCloseDialog = () => {
