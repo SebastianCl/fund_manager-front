@@ -1,30 +1,130 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Box, Button, TextField, MenuItem, FormControl, FormLabel, RadioGroup, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
+import fundGetAllRepositoryAPI from '../../api/fundGetAllRepositoryAPI';
+import transactionRepositoryAPI from '../../api/transactionRepositoryAPI'
 
 function FundSubscription() {
-    const [fundId, setFundId] = useState('');
+    const [funds, setFunds] = useState([]);
+    const [selectedFund, setSelectedFund] = useState('');
     const [amount, setAmount] = useState('');
+    const [notificationMethod, setNotificationMethod] = useState('email');
+    const [minimumAmount, setMinimumAmount] = useState(0);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogContent, setDialogContent] = useState({});
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        // Lógica para suscribirse a un fondo
+    useEffect(() => {
+        const setFundsData = async () => {
+            try {
+                const fundsData = await fundGetAllRepositoryAPI.getAllFunds()
+                setFunds(fundsData)
+            } catch (error) {
+                console.error('Error al obtener datos de los fondos:', error.message);
+            }
+        }
+        setFundsData();
+    }, []);
+
+    const handleFundChange = (fundId) => {
+        setSelectedFund(fundId);
+        const selectedFundObj = funds.find(fund => fund.fund_id === fundId);
+        if (selectedFundObj) {
+            setMinimumAmount(selectedFundObj.minimum_amount);
+        }
+    };
+
+    const handleSubscription = async () => {
+        if (parseInt(amount) < minimumAmount) {
+            setDialogContent({
+                title: 'Error de Suscripción',
+                message: `El monto ingresado (${amount}) debe ser mayor o igual al mínimo permitido (${minimumAmount})`
+            });
+            setDialogOpen(true);
+            return;
+        }
+
+        const subscriptionData = {
+            user_id: 1,
+            fund_id: selectedFund,
+            amount: parseInt(amount),
+            notification: notificationMethod
+        };
+
+        try {
+            await transactionRepositoryAPI.postTransactions(subscriptionData)
+            setDialogContent({
+                title: 'Suscripción Exitosa',
+                message: `¡Te has suscrito al fondo correctamente!`
+            });
+            setDialogOpen(true);
+        } catch (error) {
+            console.error('Error cancelling subscription:', error);
+            setDialogContent({
+                title: 'Error de Suscripción',
+                message: `Hubo un error al intentar suscribirse: ${error.message}`
+            });
+            setDialogOpen(true);
+
+        }
+
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+        setDialogContent({});
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input
-                type="text"
-                value={fundId}
-                onChange={(e) => setFundId(e.target.value)}
-                placeholder="Fund ID"
-            />
-            <input
-                type="text"
+        <Box sx={{ maxWidth: 500, margin: 'auto', padding: 2, border: '1px solid #ccc', borderRadius: 2 }}>
+            <h2>Suscribirse a un Nuevo Fondo</h2>
+            <TextField
+                select
+                label="Seleccione un fondo"
+                value={selectedFund}
+                onChange={(e) => handleFundChange(e.target.value)}
+                fullWidth
+                margin="normal"
+            >
+                {funds.map(fund => (
+                    <MenuItem key={fund.fund_id} value={fund.fund_id}>
+                        {fund.name}
+                    </MenuItem>
+                ))}
+            </TextField>
+            <TextField
+                type="number"
+                label={`Cantidad (mínimo: ${minimumAmount})`}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                placeholder="Amount"
+                fullWidth
+                margin="normal"
+                inputProps={{ min: minimumAmount }}
             />
-            <button type="submit">Subscribe</button>
-        </form>
+            <FormControl component="fieldset" margin="normal">
+                <FormLabel component="legend">Método de Notificación</FormLabel>
+                <RadioGroup
+                    value={notificationMethod}
+                    onChange={(e) => setNotificationMethod(e.target.value)}
+                >
+                    <FormControlLabel value="email" control={<Radio />} label="Email" />
+                    <FormControlLabel value="sms" control={<Radio />} label="SMS" />
+                </RadioGroup>
+            </FormControl>
+            <Button variant="contained" color="primary" onClick={handleSubscription} fullWidth>
+                Suscribirse
+            </Button>
+
+            <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+                <DialogTitle>{dialogContent.title}</DialogTitle>
+                <DialogContent>
+                    <Typography>{dialogContent.message}</Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} color="primary">
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Box>
     );
 }
 
