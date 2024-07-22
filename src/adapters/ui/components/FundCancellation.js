@@ -13,7 +13,7 @@ function FundCancellation() {
         };
 
         try {
-            await fundCancelationRepositoryAPI.getTransactions(cancellationData);
+            await fundCancelationRepositoryAPI.postCancelFund(cancellationData);
 
             setDialogContent({
                 title: 'Cancelación Exitosa',

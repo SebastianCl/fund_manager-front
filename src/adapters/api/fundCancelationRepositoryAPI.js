@@ -2,7 +2,7 @@ import apiConfig from '../../config/apiConfig';
 import Transaction from '../../core/entities/Transaction';
 
 const fundCancelationRepositoryAPI = {
-    getTransactions: async (cancellationData) => {
+    postCancelFund: async (cancellationData) => {
         const response = await fetch(`${apiConfig.baseUrl}/cancel_a_found`, {
             method: 'POST',
             headers: {
