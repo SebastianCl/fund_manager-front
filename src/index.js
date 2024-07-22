@@ -1,17 +1,14 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
+import App from './adapters/ui/containers/App';
+import userRepository from './ports/userRepository';
+import userRepositoryAPI from './adapters/api/userRepositoryAPI';
+import transactionRepository from './ports/transactionRepository';
+import transactionRepositoryAPI from './adapters/api/transactionRepositoryAPI';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+// Inyectar la implementación del repositorio
+userRepository.getUserById = userRepositoryAPI.getUserById;
+transactionRepository.getTransactions = transactionRepositoryAPI.getTransactions;
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+ReactDOM.render(<App />, document.getElementById('root'));
