@@ -1,4 +1,4 @@
-import userRepository from '../../../ports/userRepository';
+import userRepository from '../../ports/userRepository';
 
 const getUser = async (userId) => {
     return await userRepository.getUserById(userId);
