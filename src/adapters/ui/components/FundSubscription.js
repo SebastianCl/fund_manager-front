@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, MenuItem, FormControl, FormLabel, RadioGroup, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
-import fundGetAllRepositoryAPI from '../../api/fundGetAllRepositoryAPI';
+import fundRepositoryAPI from '../../api/fundRepositoryAPI';
 import transactionRepositoryAPI from '../../api/transactionRepositoryAPI'
 
 function FundSubscription() {
@@ -15,7 +15,7 @@ function FundSubscription() {
     useEffect(() => {
         const setFundsData = async () => {
             try {
-                const fundsData = await fundGetAllRepositoryAPI.getAllFunds()
+                const fundsData = await fundRepositoryAPI.getAllFunds()
                 setFunds(fundsData)
             } catch (error) {
                 console.error('Error al obtener datos de los fondos:', error.message);

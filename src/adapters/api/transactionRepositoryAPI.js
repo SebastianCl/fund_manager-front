@@ -25,6 +25,21 @@ const transactionRepositoryAPI = {
             throw new Error(errorData.detail || 'Error al unirse al fondo');
         }
     },
+
+    postTransactionCancel: async (cancellationData) => {
+        const response = await fetch(`${apiConfig.baseUrl}/cancel_a_found`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(cancellationData)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Error al cancelar la suscripción');
+        }
+    },
 };
 
 export default transactionRepositoryAPI;

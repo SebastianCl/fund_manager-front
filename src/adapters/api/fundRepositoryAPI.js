@@ -1,6 +1,6 @@
 import apiConfig from '../../config/apiConfig';
 
-const fundGetAllRepositoryAPI = {
+const fundRepositoryAPI = {
     getAllFunds: async () => {
         const response = await fetch(`${apiConfig.baseUrl}/funds`);
         if (!response.ok) {
@@ -13,4 +13,4 @@ const fundGetAllRepositoryAPI = {
     },
 };
 
-export default fundGetAllRepositoryAPI;
+export default fundRepositoryAPI;

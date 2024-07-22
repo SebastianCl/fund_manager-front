@@ -1,6 +1,7 @@
 import { Box, List, Card, CardContent, Typography, Divider, CircularProgress } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import transactionRepositoryAPI from '../../api/transactionRepositoryAPI';
+import fundRepositoryAPI from '../../api/fundRepositoryAPI'
 
 function TransactionHistory() {
     const [transactions, setTransactions] = useState([]);
@@ -20,11 +21,7 @@ function TransactionHistory() {
 
         const fetchFunds = async () => {
             try {
-                const response = await fetch(`${process.env.REACT_APP_API}/funds`);
-                if (!response.ok) {
-                    throw new Error('Error al cargar los datos de los fondos');
-                }
-                let fundsData = await response.json();
+                const fundsData = await fundRepositoryAPI.getAllFunds()
                 setFunds(fundsData);
                 setLoading(false);
             } catch (error) {
