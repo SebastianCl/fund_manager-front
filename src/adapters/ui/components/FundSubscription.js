@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, TextField, MenuItem, FormControl, FormLabel, RadioGroup, Radio, FormControlLabel, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
-import fundRepository from '../../../ports/fundRepository';
-import transactionRepository from '../../../ports/transactionRepository'
+import getAllFundsUseCase from '../../../core/use-case/getAllFundsUseCase';
+import subscribeToFundUseCase from '../../../core/use-case/subscribeToFundUseCase'
 
 function FundSubscription() {
     const [funds, setFunds] = useState([]);
@@ -15,7 +15,7 @@ function FundSubscription() {
     useEffect(() => {
         const setFundsData = async () => {
             try {
-                const fundsData = await fundRepository.getAllFunds()
+                const fundsData = await getAllFundsUseCase()
                 setFunds(fundsData)
             } catch (error) {
                 console.error('Error al obtener datos de los fondos:', error.message);
@@ -50,7 +50,7 @@ function FundSubscription() {
         };
 
         try {
-            await transactionRepository.postTransactionJoin(subscriptionData)
+            await subscribeToFundUseCase(subscriptionData)
             setDialogContent({
                 title: 'Suscripción Exitosa',
                 message: `¡Te has suscrito al fondo correctamente!`

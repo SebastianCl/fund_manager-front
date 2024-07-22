@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import getUser from '../../../core/use-case/getUser';
+import getUserUseCase from '../../../core/use-case/getUserUseCase';
 
 const UserHeader = () => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const userData = await getUser(1);
+        const getUserData = async () => {
+            const userData = await getUserUseCase(1);
             setUser(userData);
         };
-        fetchUser();
+        getUserData();
     }, []);
 
     if (!user) {

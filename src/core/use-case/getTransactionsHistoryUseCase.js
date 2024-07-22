@@ -1,7 +1,7 @@
 import transactionRepository from '../../ports/transactionRepository';
 
-const getTransactions = async () => {
+const getTransactionsHistoryUseCase = async () => {
     return await transactionRepository.getTransactions();
 };
 
-export default getTransactions;
+export default getTransactionsHistoryUseCase;

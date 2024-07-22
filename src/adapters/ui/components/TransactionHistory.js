@@ -1,7 +1,7 @@
 import { Box, List, Card, CardContent, Typography, Divider, CircularProgress } from '@mui/material';
 import React, { useState, useEffect } from 'react';
-import transactionRepositoryAPI from '../../api/transactionRepositoryAPI';
-import fundRepositoryAPI from '../../api/fundRepositoryAPI'
+import getTransactionsHistoryUseCase from '../../../core/use-case/getTransactionsHistoryUseCase';
+import getAllFundsUseCase from '../../../core/use-case/getAllFundsUseCase'
 
 function TransactionHistory() {
     const [transactions, setTransactions] = useState([]);
@@ -12,7 +12,7 @@ function TransactionHistory() {
     useEffect(() => {
         const getTransactions = async () => {
             try {
-                const transactionsData = await transactionRepositoryAPI.getTransactions()
+                const transactionsData = await getTransactionsHistoryUseCase()
                 setTransactions(transactionsData);
             } catch (error) {
                 console.error('Error al obtener las transacciones:', error);
@@ -21,7 +21,7 @@ function TransactionHistory() {
 
         const fetchFunds = async () => {
             try {
-                const fundsData = await fundRepositoryAPI.getAllFunds()
+                const fundsData = await getAllFundsUseCase()
                 setFunds(fundsData);
                 setLoading(false);
             } catch (error) {
