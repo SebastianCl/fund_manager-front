@@ -1,23 +1,18 @@
 import apiConfig from '../../config/apiConfig';
-import Transaction from '../../core/entities/Transaction';
 
 const transactionRepositoryAPI = {
     getTransactions: async () => {
         const response = await fetch(`${apiConfig.baseUrl}/transactions`);
+        if (!response.ok) {
+            throw new Error('Error al cargar los datos de las transacciones');
+        }
         const transactionsData = await response.json();
-        return transactionsData.map((transaction) =>
-            new Transaction(
-                transaction.transaction_id,
-                transaction.user_id,
-                transaction.fund_id,
-                transaction.amount,
-                transaction.type,
-                transaction.date
-            )
-        );
+        transactionsData.sort((a, b) => new Date(b.date) - new Date(a.date))
+
+        return transactionsData
     },
 
-    postTransactions: async (subscriptionData) => {
+    postTransactionJoin: async (subscriptionData) => {
         const response = await fetch(`${apiConfig.baseUrl}/join_a_found`, {
             method: 'POST',
             headers: {

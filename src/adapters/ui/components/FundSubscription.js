@@ -50,7 +50,7 @@ function FundSubscription() {
         };
 
         try {
-            await transactionRepositoryAPI.postTransactions(subscriptionData)
+            await transactionRepositoryAPI.postTransactionJoin(subscriptionData)
             setDialogContent({
                 title: 'Suscripción Exitosa',
                 message: `¡Te has suscrito al fondo correctamente!`
