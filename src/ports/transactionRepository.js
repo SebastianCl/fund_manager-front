@@ -1,6 +1,12 @@
 const transactionRepository = {
     getTransactions: async () => {
-        throw new Error('Not implemented');
+        throw new Error('No implementado');
+    },
+    postTransactionJoin: async (subscriptionData) => {
+        throw new Error('No implementado');
+    },
+    postTransactionCancel: async (cancellationData) => {
+        throw new Error('No implementado');
     },
 };
 

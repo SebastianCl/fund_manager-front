@@ -1,6 +1,6 @@
 const userRepository = {
     getUserById: async (userId) => {
-        throw new Error('Not implemented');
+        throw new Error('No implementado');
     },
 };
 

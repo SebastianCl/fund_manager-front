@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Typography } from '@mui/material';
-import transactionRepositoryAPI from '../../api/transactionRepositoryAPI'
+import transactionRepository from '../../../ports/transactionRepository'
 
 function FundCancellation() {
     const [transactionId, setTransactionId] = useState('');
@@ -13,7 +13,7 @@ function FundCancellation() {
         };
 
         try {
-            await transactionRepositoryAPI.postTransactionCancel(cancellationData);
+            await transactionRepository.postTransactionCancel(cancellationData);
 
             setDialogContent({
                 title: 'Cancelación Exitosa',
